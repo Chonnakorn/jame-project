@@ -1,0 +1,88 @@
+<style>
+    tr.setheader {
+        color: #fff;
+        background: #37a0d3;
+    }
+    .table>thead>tr>th {
+        padding: 15px;
+        text-align: center;
+        font-size: 12.5px;
+    }
+    .pointer 
+    {
+        cursor: pointer;
+    }
+</style>
+<h2 mat-dialog-title><i class="glyphicon glyphicon-plus"></i> Add and View Defect</h2>
+    <table class="table table-hover table-bordered setFontSize">
+        <thead>
+            <tr class="setheader">
+                <th>Defect ID</th>
+                <th>Defect Description</th>
+                <th>Expected Result</th>
+                <th>Status</th>
+                <th>Incident By</th>
+                <th>Assign To</th>
+                <th>Update Date</th>
+                <th>Update By</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let detailDef of mergeData">
+                <td *ngIf='detailDef.DefID != ""'>
+                    <input type="text" value="DF_000{{detailDef.DefID}}" readonly>
+                </td>   
+                <td *ngIf='detailDef.DefID == ""'>
+                    <select #mySelectDFID (change)="selectDF(detailDef.idDef,mySelectDFID.value)">
+                        <option value="">-- Select DFID --</option>
+                        <option *ngFor="let DF of listDFSelect" value="{{DF}}">DF_000{{DF}}</option>
+                        <option value="{{dfPlusData}}">DF_000{{dfPlusData}}</option>
+                    </select>
+                </td>   
+                <td>
+                    <textarea #valueDefDes rows="4" value="{{detailDef.DefDes}}" (keyup)="saveDefDes(detailDef.idDef,valueDefDes.value)" style="width:300px;"></textarea>
+                </td>
+                <td>
+                    <textarea #valueDefER rows="4" value="{{detailDef.DefE_Result}}" (keyup)="saveDefER(detailDef.idDef,valueDefER.value)"style="width:300px;"></textarea>
+                </td>
+                <td>
+                    <select #mySelectDFStatus (change)="selectStatus(detailDef.idDef,mySelectDFStatus.value)">
+                        <option value="0" [selected]="detailDef.DefStatus=='0'">Open</option>
+                        <option value="1" [selected]="detailDef.DefStatus=='1'">Delivered to test</option>
+                        <option value="2" [selected]="detailDef.DefStatus=='2'">Reject from test</option>
+                        <option value="3" [selected]="detailDef.DefStatus=='3'">Closed</option>
+                    </select>
+                </td>
+                <td *ngIf='detailDef.DefIncidentby == ""'>
+                    <select #mySelectDFIncident (change)="selectIncident(detailDef.idDef,mySelectDFIncident.value)">
+                        <option value="">-- Select Incident By --</option>
+                        <option *ngFor="let User of userData" value="{{User.idU}}">{{User.UName}}</option>
+                    </select>
+                </td>
+                <td *ngIf='detailDef.DefIncidentby != ""'>
+                    <ng-container *ngFor='let User of userData'>
+                        <ng-container *ngIf='User.idU == detailDef.DefIncidentby'>
+                            <input type="text" value="{{User.UName}}" readonly>
+                        </ng-container>
+                    </ng-container>
+                </td>
+                <td>
+                    <select #mySelectDFAssignto (change)="selectAssignto(detailDef.idDef,mySelectDFAssignto.value)">
+                        <option value="" [selected]="detailDef.DefAssignto==''">-- Select Assign to --</option>
+                        <option *ngFor="let User of userData" value="{{User.idU}}" [selected]="detailDef.DefAssignto==User.idU">{{User.UName}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" value="{{detailDef.DefUpdatedate}}" readonly>
+                </td>
+                <td>
+                    <ng-container *ngFor='let User of userData'>
+                        <ng-container *ngIf='User.idU == detailDef.DefUpdateby'>
+                            <input type="text" value="{{User.UName}}" readonly>
+                        </ng-container>
+                    </ng-container>
+                </td>
+            </tr>
+        </tbody>
+    </table> 
+    <a (click)="addRow()" class="pointer">+ Add Defect</a>   
